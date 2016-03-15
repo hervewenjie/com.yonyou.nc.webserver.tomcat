@@ -17,50 +17,46 @@ import java.net.Socket;
  * Created by mazhiqiang on 14-3-11.
  */
 public class HttpServer {
+	public static final String WEB_ROOT = System.getProperty("user.dir") + File.separator + "webroot";
+	private static final String SHUT_DOWN = "/SHUTDOWN";
+	public boolean shutdown = false;
 
-    public static final String WEB_ROOT = System.getProperty("user.dir") + File.separator + "webroot";
+	public void await() {
+		ServerSocket serverSocket = null;
+		int port = 8080;
 
-    private static final String SHUT_DOWN = "/SHUTDOWN";
+		try {
+			serverSocket = new ServerSocket(port, 1, InetAddress.getByName("127.0.0.1"));
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
 
-    public boolean shutdown = false;
+		while (!shutdown) {
+			try {
+				Socket socket = serverSocket.accept();
+				InputStream inputStream = socket.getInputStream();
+				OutputStream outputStream = socket.getOutputStream();
 
-    public void await() {
-        ServerSocket serverSocket = null;
-        int port = 8080;
-        try {
-            serverSocket = new ServerSocket(port, 1, InetAddress.getByName("127.0.0.1"));
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        while (!shutdown) {
-            try {
+				Request request = new Request(inputStream);
+				request.parse();
 
-                Socket socket = serverSocket.accept();
-                InputStream inputStream = socket.getInputStream();
-                OutputStream outputStream = socket.getOutputStream();
+				Response response = new Response(outputStream);
+				response.setRequest(request);
+				response.sendStaticResource();
 
-                Request request = new Request(inputStream);
-                request.parse();
+				socket.close();
 
-                Response response = new Response(outputStream);
-                response.setRequest(request);
-                response.sendStaticResource();
+				shutdown = request.getUri().equals(SHUT_DOWN);
+			} catch (Exception e) {
+				e.printStackTrace();
+				continue;
+			}
+		}
+	}
 
-                socket.close();
-
-                shutdown = request.getUri().equals(SHUT_DOWN);
-            } catch (Exception e) {
-                e.printStackTrace();
-                continue;
-            }
-
-        }
-    }
-
-    public static void main(String[] args) {
-        HttpServer httpServer = new HttpServer();
-        httpServer.await();
-    }
-
+	public static void main(String[] args) {
+		HttpServer httpServer = new HttpServer();
+		httpServer.await();
+	}
 }
