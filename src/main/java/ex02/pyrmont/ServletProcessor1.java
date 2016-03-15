@@ -25,7 +25,11 @@ public class ServletProcessor1 {
 		try {
 			URL[] urls = new URL[1];
 			URLStreamHandler streamHandler = null;
-			File classPath = new File(Constants.WEB_ROOT);
+			//File classPath = new File(Constants.WEB_ROOT);
+
+			// 현재 실행된 경로를 반환하도록 수정
+			final File classPath = new File(getClasspath());
+
 			String repository = (new URL("file", null, classPath.getCanonicalPath() + File.separator)).toString();
 			urls[0] = new URL(null, repository, streamHandler);
 			loader = new URLClassLoader(urls);
@@ -35,7 +39,10 @@ public class ServletProcessor1 {
 
 		Class<?> myClass = null;
 		try {
-			myClass = loader.loadClass(servletName);
+			// 패키지 이름을 포함하도록 수정
+			final String fullClassName = this.getClass().getPackage().getName() + "." + servletName;
+
+			myClass = loader.loadClass(fullClassName);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -53,5 +60,9 @@ public class ServletProcessor1 {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private String getClasspath() {
+		return this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
 	}
 }
