@@ -10,6 +10,9 @@ import org.apache.catalina.Container;
 import org.apache.catalina.Loader;
 import org.apache.catalina.DefaultContext;
 
+/**
+ * 完成载入servlet类文件功能
+ */
 public class SimpleLoader implements Loader {
 
   public static final String WEB_ROOT =

@@ -26,11 +26,12 @@ import org.apache.catalina.Wrapper;
 
 public class SimpleWrapper implements Wrapper, Pipeline {
 
-  // the servlet instance
+  // Wrapper作为一个Container包含一个Servlet实例
   private Servlet instance = null;
   private String servletClass;
   private Loader loader;
   private String name;
+  // 简单pipeline实现
   private SimplePipeline pipeline = new SimplePipeline(this);
   protected Container parent = null;
 
@@ -42,6 +43,9 @@ public class SimpleWrapper implements Wrapper, Pipeline {
     pipeline.addValve(valve);
   }
 
+    /**
+     * 加载Servlet
+     */
   public Servlet allocate() throws ServletException {
     // Load and initialize our instance if necessary
     if (instance==null) {
@@ -58,6 +62,11 @@ public class SimpleWrapper implements Wrapper, Pipeline {
     return instance;
   }
 
+    /**
+     * 加载Servlet类
+     * @return
+     * @throws ServletException
+     */
   private Servlet loadServlet() throws ServletException {
     if (instance!=null)
       return instance;
@@ -273,6 +282,9 @@ public class SimpleWrapper implements Wrapper, Pipeline {
     return null;
   }
 
+    /**
+     * invoke方法直接调用pipeline的invoke方法
+     */
   public void invoke(Request request, Response response)
     throws IOException, ServletException {
     pipeline.invoke(request, response);

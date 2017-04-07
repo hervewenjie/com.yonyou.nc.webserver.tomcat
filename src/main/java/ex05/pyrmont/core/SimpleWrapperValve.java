@@ -14,7 +14,9 @@ import org.apache.catalina.ValveContext;
 import org.apache.catalina.Contained;
 import org.apache.catalina.Container;
 
-
+/**
+ * 一个简单的Valve实现
+ */
 public class SimpleWrapperValve implements Valve, Contained {
 
   protected Container container;
@@ -33,7 +35,7 @@ public class SimpleWrapperValve implements Valve, Contained {
     if (sres instanceof HttpServletResponse)
       hres = (HttpServletResponse) sres;
 
-    // Allocate a servlet instance to process this request
+    // 分配一个servlet实例来处理当前的request和response
     try {
       servlet = wrapper.allocate();
       if (hres!=null && hreq!=null) {

@@ -14,6 +14,9 @@ import org.apache.catalina.Valve;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.http.HttpConnector;
 
+/**
+ * 大部分的应用程序是需要多个servlet合作的, 在这类应用程序中, 需要的servlet容器是Context, 不是wrapper
+ */
 public final class Bootstrap2 {
   public static void main(String[] args) {
     HttpConnector connector = new HttpConnector();
@@ -34,6 +37,7 @@ public final class Bootstrap2 {
     ((Pipeline) context).addValve(valve1);
     ((Pipeline) context).addValve(valve2);
 
+    // 映射器, 把HTTP请求映射到servlet
     Mapper mapper = new SimpleContextMapper();
     mapper.setProtocol("http");
     context.addMapper(mapper);

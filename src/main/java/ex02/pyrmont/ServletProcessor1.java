@@ -15,6 +15,8 @@ import javax.servlet.ServletResponse;
  * Process http request for servlet..
  * @author mazhiqiang
  * @date 14-3-11.
+ *
+ *
  */
 public class ServletProcessor1 {
 	public void process(Request request, Response response) {
@@ -27,7 +29,6 @@ public class ServletProcessor1 {
 			URLStreamHandler streamHandler = null;
 			//File classPath = new File(Constants.WEB_ROOT);
 
-			// 현재 실행된 경로를 반환하도록 수정
 			final File classPath = new File(getClasspath());
 
 			String repository = (new URL("file", null, classPath.getCanonicalPath() + File.separator)).toString();
@@ -39,7 +40,7 @@ public class ServletProcessor1 {
 
 		Class<?> myClass = null;
 		try {
-			// 패키지 이름을 포함하도록 수정
+			// 载入Class文件
 			final String fullClassName = this.getClass().getPackage().getName() + "." + servletName;
 
 			myClass = loader.loadClass(fullClassName);
@@ -49,7 +50,9 @@ public class ServletProcessor1 {
 
 		Servlet servlet = null;
 		try {
+		    // 初始化servlet对象, 然后调用service方法
 			servlet = (Servlet)myClass.newInstance();
+			// 必须将request和response向上转型
 			servlet.service((ServletRequest)request, (ServletResponse)response);
 		} catch (InstantiationException e) {
 			e.printStackTrace();

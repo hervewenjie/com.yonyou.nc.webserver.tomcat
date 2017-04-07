@@ -12,6 +12,13 @@ import java.net.Socket;
  * that will invoke servlet.service method, but you should add .class file to webroot folder first.
  * @author mazhiqiang
  * @date 14-3-11.
+ *
+ * 本章建立的 servlet容器是一个很小的容器, 没有实现所有功能, 因此只能运行非常简单的servlet
+ * 也 不会调用servlet init()和destroy()方法
+ * 它做下面几件事情:
+ * 1. 等待HTTP请求
+ * 2. 创建servletRequest 和 servletResponse对象
+ * 3. 请求static和servlet -> 若请求servlet, 则载入servlet类, 调用其service方法
  */
 public class HttpServer1 {
 	public static final String SHUTDOWN = "/shutdown";
@@ -41,6 +48,7 @@ public class HttpServer1 {
 				Response response = new Response(outputStream);
 				response.setRequest(request);
 
+				// 如果是 servlet
 				if (request.getUri().startsWith("/servlet/")) {
 					ServletProcessor1 processor1 = new ServletProcessor1();
 					processor1.process(request, response);

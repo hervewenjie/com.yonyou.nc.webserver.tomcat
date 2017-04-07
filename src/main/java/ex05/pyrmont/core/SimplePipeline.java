@@ -10,6 +10,9 @@ import org.apache.catalina.Response;
 import org.apache.catalina.Valve;
 import org.apache.catalina.ValveContext;
 
+/**
+ * 一个简单pipeline的实现
+ */
 public class SimplePipeline implements Pipeline {
 
   public SimplePipeline(Container container) {
@@ -36,6 +39,9 @@ public class SimplePipeline implements Pipeline {
     ((Contained) valve).setContainer(container);
   }
 
+  /**
+   * 把新的valve加入valve数组
+   */
   public void addValve(Valve valve) {
     if (valve instanceof Contained)
       ((Contained) valve).setContainer(this.container);
@@ -54,7 +60,7 @@ public class SimplePipeline implements Pipeline {
 
   public void invoke(Request request, Response response)
     throws IOException, ServletException {
-    // Invoke the first Valve in this pipeline for this request
+    // invoke当前pipeline中的第一个valve
     (new SimplePipelineValveContext()).invokeNext(request, response);
   }
 
@@ -71,6 +77,7 @@ public class SimplePipeline implements Pipeline {
       return null;
     }
 
+    // 调用pipeline中的valve
     public void invokeNext(Request request, Response response)
       throws IOException, ServletException {
       int subscript = stage;
@@ -79,6 +86,7 @@ public class SimplePipeline implements Pipeline {
       if (subscript < valves.length) {
         valves[subscript].invoke(request, response, this);
       }
+      // 到最后一个valve了再调用basic的invoke
       else if ((subscript == valves.length) && (basic != null)) {
         basic.invoke(request, response, this);
       }

@@ -10,6 +10,10 @@ import org.apache.catalina.Valve;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.http.HttpConnector;
 
+/**
+ * servlet四种容器 Engine, Host, Context, Wrapper
+ * 每个容器都包含一个Servlet实例
+ */
 public final class Bootstrap1 {
   public static void main(String[] args) {
 
@@ -17,9 +21,13 @@ public final class Bootstrap1 {
    but could be invoked by any name */
 
     HttpConnector connector = new HttpConnector();
+    // 实现最小的servlet容器
     Wrapper wrapper = new SimpleWrapper();
     wrapper.setServletClass("ModernServlet");
+    // 载入相关servlet类的工作由Loader完成
     Loader loader = new SimpleLoader();
+
+    // 管道内的阀门
     Valve valve1 = new HeaderLoggerValve();
     Valve valve2 = new ClientIPLoggerValve();
 
@@ -27,6 +35,7 @@ public final class Bootstrap1 {
     ((Pipeline) wrapper).addValve(valve1);
     ((Pipeline) wrapper).addValve(valve2);
 
+    // Connector只有一个wrapper作为container
     connector.setContainer(wrapper);
 
     try {

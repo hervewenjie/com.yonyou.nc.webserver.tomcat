@@ -23,6 +23,14 @@ import org.apache.catalina.Realm;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 
+/**
+ * 本章应用程序的目的是为了说明
+ * 如何使用默认连接器
+ *
+ * 一个Container是一个Java对象, 可以处理request返回response
+ * 也可以支持一个pipeline的valves 来顺序处理request
+ * 实现pipeline的interface
+ */
 public class SimpleContainer implements Container {
 
   public static final String WEB_ROOT =
@@ -130,12 +138,17 @@ public class SimpleContainer implements Container {
     return null;
   }
 
+  /**
+   * 只实现了invoke方法
+   */
   public void invoke(Request request, Response response)
     throws IOException, ServletException {
 
+    // servlet名字
     String servletName = ( (HttpServletRequest) request).getRequestURI();
     servletName = servletName.substring(servletName.lastIndexOf("/") + 1);
     URLClassLoader loader = null;
+    // 加载servlet类
     try {
       URL[] urls = new URL[1];
       URLStreamHandler streamHandler = null;
@@ -157,6 +170,7 @@ public class SimpleContainer implements Container {
 
     Servlet servlet = null;
 
+    // 执行service方法
     try {
       servlet = (Servlet) myClass.newInstance();
       servlet.service((HttpServletRequest) request, (HttpServletResponse) response);
